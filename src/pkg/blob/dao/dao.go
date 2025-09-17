@@ -238,6 +238,8 @@ func (d *dao) ListBlobs(ctx context.Context, query *q.Query) ([]*models.Blob, er
 }
 
 func (d *dao) FindBlobsShouldUnassociatedWithProject(ctx context.Context, projectID int64, blobs []*models.Blob) ([]*models.Blob, error) {
+	log.Infof("using union query")
+
 	if len(blobs) == 0 {
 		return nil, nil
 	}
