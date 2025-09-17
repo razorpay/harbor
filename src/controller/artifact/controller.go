@@ -322,6 +322,9 @@ func (c *controller) Delete(ctx context.Context, id int64) error {
 // the error handling logic for the root parent artifact and others is different
 // "isAccessory" is used to specify whether the artifact is an accessory.
 func (c *controller) deleteDeeply(ctx context.Context, id int64, isRoot, isAccessory bool) error {
+
+	log.Infof("delete artifact deeply")
+
 	art, err := c.Get(ctx, id, &Option{WithTag: true, WithAccessory: true})
 	if err != nil {
 		// return nil if the nonexistent artifact isn't the root parent
@@ -430,6 +433,8 @@ func (c *controller) deleteDeeply(ctx context.Context, id int64, isRoot, isAcces
 	if err != nil {
 		return err
 	}
+
+	log.Infof("fetching associations not used")
 
 	// clean associations between blob and project when the blob is not needed by project
 	if err := c.blobMgr.CleanupAssociationsForProject(ctx, art.ProjectID, blobs); err != nil {
