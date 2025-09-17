@@ -246,21 +246,22 @@ func (d *dao) FindBlobsShouldUnassociatedWithProject(ctx context.Context, projec
 		return nil, err
 	}
 
-	sql := `SELECT b.digest_blob FROM artifact a, artifact_blob b WHERE a.digest = b.digest_af AND a.project_id = ? AND b.digest_blob IN (%s)`
-	params := []interface{}{projectID}
-	for _, blob := range blobs {
-		params = append(params, blob.Digest)
-	}
-
-	var digests []string
-	_, err = o.Raw(fmt.Sprintf(sql, orm.ParamPlaceholderForIn(len(blobs))), params...).QueryRows(&digests)
-	if err != nil {
-		return nil, err
-	}
+	sql := `SELECT b.digest_blob FROM artifact a JOIN artifact_blob b ON a.digest = b.digest_af WHERE a.project_id = ? AND b.digest_blob = ? LIMIT 1`
 
 	shouldAssociated := map[string]bool{}
-	for _, digest := range digests {
-		shouldAssociated[digest] = true
+
+	// Loop over each blob digest individually
+	for _, blob := range blobs {
+		var digests []string
+		_, err = o.Raw(sql, projectID, blob.Digest).QueryRows(&digests)
+		if err != nil {
+			return nil, err
+		}
+
+		// If any records are found, this blob should be associated with the project
+		if len(digests) > 0 {
+			shouldAssociated[blob.Digest] = true
+		}
 	}
 
 	var results []*models.Blob
