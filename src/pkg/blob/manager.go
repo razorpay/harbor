@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/goharbor/harbor/src/lib/errors"
-	"github.com/goharbor/harbor/src/lib/log"
 	"github.com/goharbor/harbor/src/lib/q"
 	"github.com/goharbor/harbor/src/pkg/blob/dao"
 	"github.com/goharbor/harbor/src/pkg/blob/models"
@@ -105,13 +104,9 @@ func (m *manager) CleanupAssociationsForArtifact(ctx context.Context, artifactDi
 }
 
 func (m *manager) CleanupAssociationsForProject(ctx context.Context, projectID int64, blobs []*Blob) error {
-	log.Infof("cleanup associations for project %d", projectID)
-
 	if len(blobs) == 0 {
 		return nil
 	}
-
-	log.Infof("blobs: %v", blobs)
 
 	shouldUnassociatedBlobs, err := m.dao.FindBlobsShouldUnassociatedWithProject(ctx, projectID, blobs)
 	if err != nil {
