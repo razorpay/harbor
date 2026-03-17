@@ -42,7 +42,7 @@ type gcAPI struct {
 }
 
 const minWorkers = 0
-const maxWorkers = 10
+const maxWorkers = 30
 
 func newGCAPI() *gcAPI {
 	return &gcAPI{

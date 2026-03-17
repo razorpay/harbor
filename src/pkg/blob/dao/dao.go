@@ -17,6 +17,7 @@ package dao
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/docker/distribution/manifest/schema2"
@@ -245,15 +246,19 @@ func (d *dao) FindBlobsShouldUnassociatedWithProject(ctx context.Context, projec
 	if err != nil {
 		return nil, err
 	}
+	// Build UNION query for all blob digests with parentheses
+	var unionParts []string
+	var params []interface{}
 
-	sql := `SELECT b.digest_blob FROM artifact a, artifact_blob b WHERE a.digest = b.digest_af AND a.project_id = ? AND b.digest_blob IN (%s)`
-	params := []interface{}{projectID}
 	for _, blob := range blobs {
-		params = append(params, blob.Digest)
+		unionParts = append(unionParts, `(SELECT b.digest_blob FROM artifact a, artifact_blob b WHERE a.digest = b.digest_af AND a.project_id = ? AND b.digest_blob = ? LIMIT 1)`)
+		params = append(params, projectID, blob.Digest)
 	}
 
+	sql := strings.Join(unionParts, " UNION ")
+
 	var digests []string
-	_, err = o.Raw(fmt.Sprintf(sql, orm.ParamPlaceholderForIn(len(blobs))), params...).QueryRows(&digests)
+	_, err = o.Raw(sql, params...).QueryRows(&digests)
 	if err != nil {
 		return nil, err
 	}
