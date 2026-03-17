@@ -1,6 +1,6 @@
 ARG harbor_base_image_version
 ARG harbor_base_namespace
-FROM --platform=${BUILDPLATFORM:-linux/amd64} ${harbor_base_namespace}/harbor-jobservice-base:${harbor_base_image_version}
+FROM ${harbor_base_namespace}/harbor-jobservice-base:${harbor_base_image_version}
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM

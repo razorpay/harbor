@@ -11,12 +11,12 @@ VERSION="$1"
 
 set -e
 
-# the temp folder to store binary file...
-mkdir -p binary
-rm -rf binary/registry || true
-
 cd `dirname $0`
 cur=$PWD
+
+# the temp folder to store binary file (must be under script dir for docker cp)
+mkdir -p binary
+rm -rf binary/registry || true
 
 # the temp folder to store distribution source code...
 TEMP=`mktemp -d ${TMPDIR-/tmp}/distribution.XXXXXX`
@@ -29,15 +29,20 @@ echo 'add patch https://github.com/nikhil-ch-rzp/distribution/pull/1...'
 wget https://github.com/nikhil-ch-rzp/distribution/pull/1.patch
 git apply 1.patch
 
+# add aws patch
+# echo 'add patch https://github.com/nikhil-ch-rzp/distribution/pull/2...'
+# wget https://github.com/nikhil-ch-rzp/distribution/pull/2.patch
+# git apply 2.patch
+
 # add patch 3599 to update AWS SDK
-echo 'add patch https://github.com/distribution/distribution/pull/3599 ...'
-wget https://github.com/distribution/distribution/pull/3599.patch
-git apply 3599.patch
+# echo 'add patch https://github.com/distribution/distribution/pull/3599 ...'
+# wget https://github.com/distribution/distribution/pull/3599.patch
+# git apply 3599.patch
 
 # add patch 3921 for IRSA
-echo 'add patch https://github.com/distribution/distribution/pull/3921 ...'
-wget https://github.com/distribution/distribution/pull/3921.patch
-git apply 3921.patch
+# echo 'add patch https://github.com/distribution/distribution/pull/3921 ...'
+# wget https://github.com/distribution/distribution/pull/3921.patch
+# git apply 3921.patch
 
 # add patch redis
 git apply $cur/redis.patch

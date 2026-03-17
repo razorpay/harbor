@@ -86,14 +86,16 @@ GEN_TLS=
 
 # version prepare
 # for docker image tag
-VERSIONTAG=gc-dev
+VERSIONTAG=gc-dev-multiarch#v2.11.0-rc4-gcfixes
 # for base docker image tag
 BUILD_BASE=true
 PUSHBASEIMAGE=false
-BASEIMAGETAG=gc-dev
+BASEIMAGETAG=gc-dev2
 BUILDBASETARGET=trivy-adapter core db jobservice log nginx portal prepare redis registry registryctl exporter
-IMAGENAMESPACE=harbor.razorpay.com/razorpay-external#goharbor
-BASEIMAGENAMESPACE=harbor.razorpay.com/razorpay-external#goharbor
+# Registry for built images. Override with: make build IMAGE_REGISTRY=<your-registry>
+IMAGE_REGISTRY ?= goharbor
+IMAGENAMESPACE=$(IMAGE_REGISTRY)
+BASEIMAGENAMESPACE=$(IMAGE_REGISTRY)
 # #input true/false only
 PULL_BASE_FROM_DOCKERHUB=true
 
@@ -280,9 +282,11 @@ define prepare_docker_image
 	fi
 endef
 
-# lint swagger doc
-# Spectral image was built and pushed to rzp harbor with support amd, arm arch
-SPECTRAL_IMAGENAME=harbor.razorpay.com/razorpay/stoplight/spectral#$(IMAGENAMESPACE)/spectral
+# Spectral image was also built and pushed to rzp harbor with support amd, arm arch 
+# harbor.razorpay.com/razorpay/stoplight/spectral
+
+# lint swagger doc (override SPECTRAL_IMAGENAME if using a custom image)
+SPECTRAL_IMAGENAME=$(IMAGENAMESPACE)/spectral
 SPECTRAL_VERSION=6.11.0
 SPECTRAL_IMAGE_BUILD_CMD=${DOCKERBUILD} -f ${TOOLSPATH}/spectral/Dockerfile --build-arg GOLANG=${GOBUILDIMAGE} --build-arg SPECTRAL_VERSION=${SPECTRAL_VERSION} -t ${SPECTRAL_IMAGENAME}:$(SPECTRAL_VERSION) .
 SPECTRAL=$(RUNCONTAINER) $(SPECTRAL_IMAGENAME):$(SPECTRAL_VERSION)
