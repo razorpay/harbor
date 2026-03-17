@@ -21,6 +21,7 @@ on:
       - main
       - main_v2.11.0
       - 'release-*'
+      - 'fix/gc-optimization'
   workflow_dispatch:
     inputs:
       tag:

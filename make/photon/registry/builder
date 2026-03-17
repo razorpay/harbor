@@ -25,8 +25,8 @@ git clone -b $VERSION https://github.com/distribution/distribution.git $TEMP
 cd $TEMP
 
 # add GC patch
-echo 'add patch https://github.com/nikhil-ch-rzp/distribution/pull/1...'
-wget https://github.com/nikhil-ch-rzp/distribution/pull/1.patch
+echo 'add patch https://github.com/razorpay/distribution/pull/1...'
+wget https://github.com/razorpay/distribution/pull/1.patch
 git apply 1.patch
 
 # add aws patch
