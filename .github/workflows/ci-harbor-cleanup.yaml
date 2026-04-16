@@ -26,6 +26,7 @@ jobs:
           repository: harbor-cleanup
           context: tools/harbor-cleanup
           file: tools/harbor-cleanup/docker/Dockerfile
+          platforms: ${{ replace(matrix.platform, '-', '/') }}
           custom-tag: ${{ (github.ref_name == 'master' && format('{0}-{1}', github.sha, matrix.platform)) || format('test-{0}-{1}', github.sha, matrix.platform) }}
           enable-login: true
           push: true
