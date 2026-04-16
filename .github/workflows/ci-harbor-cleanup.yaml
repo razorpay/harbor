@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-harbor-cleanup:
-    runs-on: [non-api, '${{ matrix.platform }}']
+    runs-on: ubuntu-latest
     name: Build Harbor Cleanup Tool image
     strategy:
       fail-fast: false
@@ -35,7 +35,7 @@ jobs:
 
   harbor-cleanup-multiarch:
     needs: [build-harbor-cleanup]
-    runs-on: [non-api, linux-arm64]
+    runs-on: ubuntu-latest
     name: Build multiarch Harbor Cleanup Tool image
     steps:
       - name: Combine Multi-Arch Image
